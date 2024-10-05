@@ -11,7 +11,7 @@ public class AuthController {
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/login")
     public void login() {
         log.info("Logging in");
@@ -23,19 +23,19 @@ public class AuthController {
         log.info("Registering");
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/logout")
     public void logout() {
         log.info("Logging out");
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/current-user")
     public void currentUser() {
         log.info("Getting current user");
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/refresh-token")
     public void refreshToken() {
         log.info("Refreshing token");
