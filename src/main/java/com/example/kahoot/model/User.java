@@ -1,15 +1,13 @@
 package com.example.kahoot.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+// import jakarta.persistence.Entity;
+// import jakarta.persistence.Id;
 
 import java.util.UUID;
 
-@Entity
 public class User {
-    @Id
     private UUID id;
-    private String name;
+    private String username;
     private String email;
     private String password;
     private String role;
@@ -22,12 +20,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
