@@ -13,11 +13,5 @@ public class KahootApplication {
 		SpringApplication.run(KahootApplication.class, args);
 	}
 
-	@Bean
-	public User user(UserRepository userRepository) {
-		User user = new User();
-		userRepository.save(user);
-		return user;
-	}
 
 }

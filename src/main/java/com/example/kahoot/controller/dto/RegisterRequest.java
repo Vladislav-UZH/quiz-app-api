@@ -1,26 +1,9 @@
-package com.example.kahoot.model;
+package com.example.kahoot.controller.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
-import java.util.UUID;
-
-@Entity
-public class User {
-    @Id
-    private UUID id;
+public class RegisterRequest {
     private String name;
     private String email;
     private String password;
-    private String role;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -44,13 +27,5 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 }
