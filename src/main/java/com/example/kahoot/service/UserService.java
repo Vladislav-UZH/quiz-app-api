@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll();
     }
 
     public Optional<User> getUserById(UUID id) {
@@ -33,7 +33,7 @@ public class UserService {
 
     public void updateUser(UUID id, User user) {
         if (userRepository.findById(id).isPresent()) {
-            user.setId(id);
+//            user.setId(id);
             userRepository.save(user);
         }
     }

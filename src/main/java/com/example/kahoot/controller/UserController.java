@@ -2,6 +2,7 @@ package com.example.kahoot.controller;
 
 import com.example.kahoot.controller.dto.LoginRequest;
 import com.example.kahoot.controller.dto.RegisterRequest;
+import com.example.kahoot.enums.user.UserRole;
 import com.example.kahoot.model.User;
 import com.example.kahoot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody RegisterRequest registerRequest) {
         User user = new User();
-        user.setName(registerRequest.getUsername());
+        user.setId(UUID.randomUUID());
+        user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword());
+        user.setRole(UserRole.USER.getDisplayName());
         userService.createUser(user);
     }
 
@@ -50,7 +53,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public void updateUser(@PathVariable UUID id, @RequestBody RegisterRequest registerRequest) {
         User user = new User();
-        user.setName(registerRequest.getUsername());
+        user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword());
         userService.updateUser(id, user);

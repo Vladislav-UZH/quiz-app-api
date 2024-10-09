@@ -52,7 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void save(User user) {
         String sql = "INSERT INTO users (id, name, email, password, role) VALUES (?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, user.getId().toString(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
+        jdbcTemplate.update(sql, user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole());
     }
 
     @Override
@@ -64,6 +64,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void deleteById(UUID id) {
         String sql = "DELETE FROM users WHERE id = ?";
-        jdbcTemplate.update(sql, id.toString());
+        jdbcTemplate.update(sql, id);
     }
 }
