@@ -53,9 +53,11 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public void updateUser(@PathVariable UUID id, @RequestBody RegisterRequest registerRequest) {
         User user = new User();
+//        user.setId(id);
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword());
+        user.setRole(registerRequest.getRole());
         userService.updateUser(id, user);
     }
 
