@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class User {
     private UUID id;
-    private String username;
+    private String name;
     private String email;
     private String password;
     private String role;
@@ -20,12 +20,12 @@ public class User {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {

@@ -1,37 +1,64 @@
 package com.example.kahoot.controller;
 
+import com.example.kahoot.controller.dto.LoginRequest;
+import com.example.kahoot.controller.dto.RegisterRequest;
 import com.example.kahoot.model.User;
-import jakarta.websocket.server.PathParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.example.kahoot.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    private final UserService userService;
 
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users")
-    public List<User> getUsers() {
-        log.info("Getting all users");
-        return List.of(new User(), new User());
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/user/{id}")
-    public User getUser(@PathParam("id") String id) {
-        log.info("Getting user with id: {}", id);
-        return new User();
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User getUserById(@PathVariable UUID id) {
+        return userService.getUserById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(@RequestBody RegisterRequest registerRequest) {
+        User user = new User();
+        user.setName(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(registerRequest.getPassword());
+        userService.createUser(user);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateUser(@PathVariable UUID id, @RequestBody RegisterRequest registerRequest) {
+        User user = new User();
+        user.setName(registerRequest.getUsername());
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(registerRequest.getPassword());
+        userService.updateUser(id, user);
+    }
+
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PutMapping("/user/{id}")
-    public void updateUser(@PathParam("id") String id, User user) {
-        log.info("Updating user with id: {}", id);
+    public void deleteUser(@PathVariable UUID id) {
+        userService.deleteUser(id);
     }
-
 }

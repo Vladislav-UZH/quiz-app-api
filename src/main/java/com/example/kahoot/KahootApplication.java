@@ -1,10 +1,7 @@
 package com.example.kahoot;
 
-import com.example.kahoot.model.User;
-import com.example.kahoot.repositories.UserRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class KahootApplication {
