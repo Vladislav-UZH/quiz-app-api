@@ -1,6 +1,5 @@
 package com.example.kahoot.controller;
 
-import com.example.kahoot.controller.dto.LoginRequest;
 import com.example.kahoot.controller.dto.RegisterRequest;
 import com.example.kahoot.enums.user.UserRole;
 import com.example.kahoot.model.User;
@@ -41,7 +40,6 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createUser(@RequestBody RegisterRequest registerRequest) {
         User user = new User();
-        user.setId(UUID.randomUUID());
         user.setName(registerRequest.getName());
         user.setEmail(registerRequest.getEmail());
         user.setPassword(registerRequest.getPassword());
@@ -52,13 +50,7 @@ public class UserController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateUser(@PathVariable UUID id, @RequestBody RegisterRequest registerRequest) {
-        User user = new User();
-//        user.setId(id);
-        user.setName(registerRequest.getName());
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
-        user.setRole(registerRequest.getRole());
-        userService.updateUser(id, user);
+        userService.updateUser(id, registerRequest);
     }
 
     @DeleteMapping("/{id}")

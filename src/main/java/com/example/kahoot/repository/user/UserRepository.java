@@ -12,7 +12,7 @@ public interface UserRepository {
 
     void save(User user);
 
-    void update(User user);
+    void update(UUID id, User user);
 
     void deleteById(UUID id);
 }

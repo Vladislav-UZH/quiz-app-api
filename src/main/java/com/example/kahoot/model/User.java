@@ -3,9 +3,12 @@ package com.example.kahoot.model;
 // import jakarta.persistence.Entity;
 // import jakarta.persistence.Id;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.UUID;
 
 public class User {
+    @Id
     private UUID id;
     private String name;
     private String email;
