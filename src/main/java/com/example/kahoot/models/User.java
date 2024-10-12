@@ -13,9 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
+//import java.util.UUID;
 
-// maybe add @Table(name = "users") here
 @Table(name = "users")
 @Entity(name = "users")
 @Getter
