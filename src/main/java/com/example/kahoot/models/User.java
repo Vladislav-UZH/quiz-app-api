@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 // maybe add @Table(name = "users") here
-@Table()
+@Table(name = "users")
 @Entity(name = "users")
 @Getter
 @NoArgsConstructor
@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;
+    private Integer id;
 
     @Column(name = "login")
     private String login;

@@ -1,5 +1,6 @@
-package com.example.kahoot.service;
+package com.example.kahoot.services;
 
+import com.example.kahoot.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,11 @@ public class UserService {
     private JdbcTemplate jdbcTemplate;
 
     public void createUserTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS app_user (" +
+        String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id SERIAL PRIMARY KEY, " +
-                "username VARCHAR(50) NOT NULL, " +
+                "login VARCHAR(50) NOT NULL, " +
                 "password VARCHAR(255) NOT NULL, " +
-                "email VARCHAR(100) NOT NULL, " +
-                "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                "role VARCHAR(50) NOT NULL" +
                 ")";
         jdbcTemplate.execute(sql);
         System.out.println("User table created successfully");

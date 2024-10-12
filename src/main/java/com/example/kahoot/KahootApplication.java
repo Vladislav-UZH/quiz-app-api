@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 
-@PropertySource("classpath:config/.env")
+@PropertySource("classpath:/config/.env")
 @SpringBootApplication
 public class KahootApplication {
 
