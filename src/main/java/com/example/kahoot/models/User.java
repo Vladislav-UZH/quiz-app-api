@@ -26,6 +26,7 @@ public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    need to change to UUID
     private Integer id;
 
     @Column(name = "login")

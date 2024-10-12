@@ -5,7 +5,7 @@ import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.models.User;
-import com.example.kahoot.security.auth.TokenProvider;
+import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

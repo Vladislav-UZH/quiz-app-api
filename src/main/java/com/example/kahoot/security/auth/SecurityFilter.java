@@ -1,6 +1,7 @@
 package com.example.kahoot.security.auth;
 
 import com.example.kahoot.repositories.UserRepository;
+import com.example.kahoot.security.token.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
