@@ -7,15 +7,15 @@ import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.models.User;
 import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.services.AuthService;
+import jakarta.websocket.OnError;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,17 +27,49 @@ public class AuthController {
     @Autowired
     private TokenProvider tokenService;
 
+    private static final Log log = LogFactory.getLog(AuthController.class);
+
+    @GetMapping("/signup")
+    public ResponseEntity<?> signUp() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/signin")
+    public ResponseEntity<?> signIn() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto data) {
-        service.signUp(data);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        try {
+            service.signUp(data);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @PostMapping("/signin")
     public ResponseEntity<JwtDto> signIn(@RequestBody SignInDto data) {
-        var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        var authUser = authenticationManager.authenticate(usernamePassword);
-        var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
-        return ResponseEntity.ok(new JwtDto(accessToken));
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            var authUser = authenticationManager.authenticate(usernamePassword);
+            var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
+            return ResponseEntity.ok(new JwtDto(accessToken));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
