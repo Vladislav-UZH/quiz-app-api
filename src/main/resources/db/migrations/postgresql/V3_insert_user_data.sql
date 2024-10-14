@@ -1,0 +1,2 @@
+INSERT INTO migrations.user (id, login, email, password, role)
+VALUES (1 ,'admin', 'admin@gmail.com', 'admin', 'ADMIN');
