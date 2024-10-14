@@ -158,10 +158,9 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>10.19.0</version>
 		</dependency>
 	</dependencies>
-
-
 
 	<build>
 		<plugins>
