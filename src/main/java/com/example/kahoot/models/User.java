@@ -7,13 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.aspectj.lang.annotation.DeclareError;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Collection;
 import java.util.List;
-//import java.util.UUID;
+import java.util.UUID;
 
 @Table(name = "users")
 @Entity(name = "users")
@@ -24,23 +27,31 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    need to change to UUID
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "UUID")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private UUID id;
 
     @Column(name = "login")
+    @NotEmpty(message = "login cannot be empty")
     private String login;
 
+    @Column(name = "email")
+    @NotEmpty(message = "Email cannot be empty")
+    @Email(message = "Email should be valid")
+    private String email;
+
     @Column(name = "password")
+    @NotEmpty(message = "Password cannot be empty")
     private String password;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String login, String password, UserRole role) {
+    public User(String login, String email ,String password, UserRole role) {
         this.login = login;
+        this.email = email;
         this.password = password;
         this.role = role;
     }
