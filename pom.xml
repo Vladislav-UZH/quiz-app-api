@@ -59,6 +59,14 @@
 			<scope>runtime</scope>
 		</dependency>
 
+<!-- THIS FUCKING STUPID SHIT DOESN'T WORKING!!! -->
+		<!-- Flyway -->
+<!--		<dependency>-->
+<!--			<groupId>org.flywaydb</groupId>-->
+<!--			<artifactId>flyway-core</artifactId>-->
+<!--			<version>10.20.0</version> &lt;!&ndash; Ensure you have a version specified &ndash;&gt;-->
+<!--		</dependency>-->
+
 		<!-- Spring Boot Starter Data JDBC -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
