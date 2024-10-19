@@ -1,5 +1,6 @@
 package com.example.kahoot.security.auth;
 
+import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.repositories.UserRepository;
 import com.example.kahoot.security.token.TokenProvider;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -26,10 +28,13 @@ public class SecurityFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         var token = this.recoverToken(request);
         if (token != null) {
-            var login = tokenService.validateToken(token);
-            var user = userRepository.findByLogin(login);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            var username = tokenService.validateToken(token);
+            var userOptional = userRepository.findByUsername(username);
+            if (userOptional.isPresent()) {
+                var user = userOptional.get();
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         filterChain.doFilter(request, response);
     }

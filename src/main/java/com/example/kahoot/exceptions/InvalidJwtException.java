@@ -1,4 +1,4 @@
-package com.example.kahoot.exeptions;
+package com.example.kahoot.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

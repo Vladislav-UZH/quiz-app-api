@@ -32,9 +32,9 @@ public class User implements UserDetails {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
-    @Column(name = "login")
-    @NotEmpty(message = "login cannot be empty")
-    private String login;
+    @Column(name = "username")
+    @NotEmpty(message = "username cannot be empty")
+    private String username;
 
     @Column(name = "email")
     @NotEmpty(message = "Email cannot be empty")
@@ -49,8 +49,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String login, String email ,String password, UserRole role) {
-        this.login = login;
+    public User(String username, String email ,String password, UserRole role) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -66,11 +66,11 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return login;
+        return username;
     }
 
-    public void setUsername(String login) {
-        this.login = login;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
