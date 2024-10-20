@@ -9,7 +9,6 @@ import org.springframework.context.annotation.PropertySource;
 public class KahootApplication {
 
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(KahootApplication.class, args);
 	}

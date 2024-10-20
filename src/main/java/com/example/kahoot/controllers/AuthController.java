@@ -29,26 +29,6 @@ public class AuthController {
 
     private static final Log log = LogFactory.getLog(AuthController.class);
 
-    @GetMapping("/signup")
-    public ResponseEntity<?> signUp() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/signin")
-    public ResponseEntity<?> signIn() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto data) {
         try {
@@ -63,13 +43,29 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<JwtDto> signIn(@RequestBody SignInDto data) {
         try {
-            var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
             var authUser = authenticationManager.authenticate(usernamePassword);
             var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
             return ResponseEntity.ok(new JwtDto(accessToken));
+//            return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> signOut() {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh() {
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<?> getCurrentUser() {
+        return ResponseEntity.ok().build();
     }
 }

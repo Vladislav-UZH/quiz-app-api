@@ -1,5 +1,6 @@
 package com.example.kahoot.security.config;
 
+import com.example.kahoot.enums.UserRole;
 import com.example.kahoot.security.auth.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,8 @@ public class AuthConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/v1/auth/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/books").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/books").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/v1/books").hasRole(UserRole.ADMIN.name())
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
