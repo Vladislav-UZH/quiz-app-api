@@ -1,33 +1,40 @@
 package com.example.kahoot.services;
 
 import com.example.kahoot.controllers.dtos.SignUpDto;
+import com.example.kahoot.enums.UserRole;
 import com.example.kahoot.models.User;
 import com.example.kahoot.repositories.UserRepository;
-import com.example.kahoot.exeptions.InvalidJwtException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthService implements UserDetailsService {
+public class AuthService {
 
-    @Autowired
-    UserRepository repository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder; // For password hashing
 
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        var user = repository.findByLogin(username);
-        return user;
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDetails signUp(SignUpDto data) throws InvalidJwtException {
-        if (repository.findByLogin(data.login()) != null) {
-            throw new InvalidJwtException("Username already exists");
+    @Transactional
+    public void signUp(SignUpDto data) {
+        if (userRepository.findByUsername(data.username()).isPresent()) {
+            throw new IllegalArgumentException("A user with this username already exists.");
         }
-        String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.login(), data.email() , encryptedPassword, data.role());
-        return repository.save(newUser);
+        if (userRepository.findByEmail(data.email()).isPresent()) {
+            throw new IllegalArgumentException("A user with this email already exists.");
+        }
+
+        User user = new User(
+                data.username(),
+                data.email(),
+                passwordEncoder.encode(data.password()),
+                data.role()
+        );
+
+        userRepository.save(user);
     }
 }

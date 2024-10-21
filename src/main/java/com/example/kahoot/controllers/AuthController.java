@@ -1,13 +1,11 @@
 package com.example.kahoot.controllers;
 
-//import jakarta.validation.Valid;
 import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.models.User;
 import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.services.AuthService;
-import jakarta.websocket.OnError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ public class AuthController {
     private static final Log log = LogFactory.getLog(AuthController.class);
 
     @GetMapping("/signup")
-    public ResponseEntity<?> signUp() {
+    public ResponseEntity<?> signUpPage() {
         try {
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
@@ -40,7 +38,7 @@ public class AuthController {
     }
 
     @GetMapping("/signin")
-    public ResponseEntity<?> signIn() {
+    public ResponseEntity<?> signInPage() {
         try {
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
@@ -56,20 +54,20 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtDto> signIn(@RequestBody SignInDto data) {
+    public ResponseEntity<?> signIn(@RequestBody SignInDto data) {
         try {
-            var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
             var authUser = authenticationManager.authenticate(usernamePassword);
             var accessToken = tokenService.generateAccessToken((User) authUser.getPrincipal());
             return ResponseEntity.ok(new JwtDto(accessToken));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or password.");
         }
     }
 }

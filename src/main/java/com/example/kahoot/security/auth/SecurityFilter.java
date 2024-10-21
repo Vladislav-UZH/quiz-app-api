@@ -1,5 +1,6 @@
 package com.example.kahoot.security.auth;
 
+import com.example.kahoot.models.User;
 import com.example.kahoot.repositories.UserRepository;
 import com.example.kahoot.security.token.TokenProvider;
 import jakarta.servlet.FilterChain;
@@ -26,18 +27,25 @@ public class SecurityFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         var token = this.recoverToken(request);
         if (token != null) {
-            var login = tokenService.validateToken(token);
-            var user = userRepository.findByLogin(login);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                var username = tokenService.validateToken(token);
+                var user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found."));
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                // Log the error if necessary
+                SecurityContextHolder.clearContext();
+            }
         }
         filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null)
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return null;
+        }
         return authHeader.replace("Bearer ", "");
     }
 }

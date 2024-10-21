@@ -1,4 +1,4 @@
 package com.example.kahoot.controllers.dtos;
 
-public record SignInDto(String login, String password) {
+public record SignInDto(String username, String password) {
 }
