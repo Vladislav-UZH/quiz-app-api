@@ -4,7 +4,6 @@ import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.models.User;
-import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.security.token.TokenService;
 import com.example.kahoot.services.AuthService;
 import org.apache.commons.logging.Log;
@@ -93,7 +92,7 @@ public class AuthController {
             return ResponseEntity.ok(new JwtDto(newAccessToken, expirationTime));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or password.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtDto("Invalid username or password.", null));
         }
     }
 
