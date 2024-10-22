@@ -27,26 +27,6 @@ public class AuthController {
 
     private static final Log log = LogFactory.getLog(AuthController.class);
 
-    @GetMapping("/signup")
-    public ResponseEntity<?> signUpPage() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @GetMapping("/signin")
-    public ResponseEntity<?> signInPage() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto data) {
         try {
