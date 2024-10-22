@@ -27,8 +27,9 @@ public class AuthConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/*").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signin").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/books").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
@@ -36,8 +37,7 @@ public class AuthConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
