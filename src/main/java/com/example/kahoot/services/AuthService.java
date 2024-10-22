@@ -1,40 +1,50 @@
 package com.example.kahoot.services;
 
+import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
-import com.example.kahoot.enums.UserRole;
 import com.example.kahoot.models.User;
 import com.example.kahoot.repositories.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Service
 public class AuthService {
+    @Autowired
+    private UserRepository userRepository;
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder; // For password hashing
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Transactional
     public void signUp(SignUpDto data) {
         if (userRepository.findByUsername(data.username()).isPresent()) {
-            throw new IllegalArgumentException("A user with this username already exists.");
+            throw new RuntimeException("Username is already taken");
         }
-        if (userRepository.findByEmail(data.email()).isPresent()) {
-            throw new IllegalArgumentException("A user with this email already exists.");
-        }
-
-        User user = new User(
-                data.username(),
-                data.email(),
-                passwordEncoder.encode(data.password()),
-                data.role()
-        );
-
+        User user = new User();
+        user.setUsername(data.username());
+        user.setEmail(data.email());
+        user.setPassword(passwordEncoder.encode(data.password()));
+        user.setRole(data.role());
         userRepository.save(user);
+    }
+
+//    public User signIn(SignInDto data) {
+//        User user = userRepository.findByUsername(data.username())
+//                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
+//        if (!passwordEncoder.matches(data.password(), user.getPassword())) {
+//            throw new RuntimeException("Invalid username or password");
+//        }
+//        return user;
+//    }
+
+    public User getCurrentUser() {
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            return (User) authentication.getPrincipal();
+        }
+        throw new UsernameNotFoundException("No user currently authenticated");
     }
 }
