@@ -90,8 +90,20 @@ public class User implements UserDetails {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String login) {
+        this.username = login;
+    }
+
+    public void setEmail(@NotEmpty(message = "Email cannot be empty") @Email(message = "Email should be valid") String email) {
+        this.email = email;
+    }
+
+    public void setPassword(@NotEmpty(message = "Password cannot be empty") String password) {
+        this.password = password;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     // Other UserDetails methods
