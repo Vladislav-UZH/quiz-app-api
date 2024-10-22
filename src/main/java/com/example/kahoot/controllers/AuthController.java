@@ -1,6 +1,5 @@
 package com.example.kahoot.controllers;
 
-//import jakarta.validation.Valid;
 import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
@@ -8,7 +7,6 @@ import com.example.kahoot.models.User;
 import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.security.token.TokenService;
 import com.example.kahoot.services.AuthService;
-import jakarta.websocket.OnError;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +64,6 @@ public class AuthController {
         }
     }
 
-
-
     @PostMapping("/signout")
     public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
         try {
@@ -80,7 +76,7 @@ public class AuthController {
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -97,7 +93,7 @@ public class AuthController {
             return ResponseEntity.ok(new JwtDto(newAccessToken, expirationTime));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username or password.");
         }
     }
 
