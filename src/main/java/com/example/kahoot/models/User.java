@@ -1,18 +1,16 @@
 package com.example.kahoot.models;
 
-//import lombok.*;
 import com.example.kahoot.enums.UserRole;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.aspectj.lang.annotation.DeclareError;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,29 +25,52 @@ import java.util.UUID;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(columnDefinition = "UUID"   )
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    before the change was AUTO
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "UUID")
     private UUID id;
 
-    @Column(name = "username")
-    @NotEmpty(message = "username cannot be empty")
+    @Column(name = "username", nullable = false)
+    @NotEmpty(message = "Username cannot be empty")
     private String username;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true, nullable = false)
     @NotEmpty(message = "Email cannot be empty")
     @Email(message = "Email should be valid")
     private String email;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     @NotEmpty(message = "Password cannot be empty")
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    public User(String username, String email ,String password, UserRole role) {
+    @Column(name = "level")
+    private int level;  // User level
+
+    @Column(name = "score")
+    private int score;  // User score
+
+    @Column(name = "day_streak")
+    private int dayStreak;  // Day streak count
+
+    @Column(name = "count_test")
+    private int countTest;  // Number of tests taken
+
+    @ElementCollection
+    @Column(name = "user_history")
+    private List<UUID> userHistory;  // User game history (last 10 games)
+
+    // Relationships with Follower
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follower> followers;
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follower> following;
+
+    public User(String username, String email, String password, UserRole role) {
         this.username = username;
         this.email = email;
         this.password = password;
@@ -69,10 +90,23 @@ public class User implements UserDetails {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String login) {
+        this.username = login;
     }
 
+    public void setEmail(@NotEmpty(message = "Email cannot be empty") @Email(message = "Email should be valid") String email) {
+        this.email = email;
+    }
+
+    public void setPassword(@NotEmpty(message = "Password cannot be empty") String password) {
+        this.password = password;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    // Other UserDetails methods
     @Override
     public boolean isAccountNonExpired() {
         return true;
