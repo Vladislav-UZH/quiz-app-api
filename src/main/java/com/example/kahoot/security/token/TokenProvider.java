@@ -3,7 +3,6 @@ package com.example.kahoot.security.token;
 import com.example.kahoot.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class TokenService {
+public class TokenProvider {
     private Key key;
     private Set<String> blacklistedTokens;
 

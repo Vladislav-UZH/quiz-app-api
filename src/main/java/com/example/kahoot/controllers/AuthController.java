@@ -5,7 +5,7 @@ import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.controllers.dtos.UserDto;
 import com.example.kahoot.models.User;
-import com.example.kahoot.security.token.TokenService;
+import com.example.kahoot.security.token.TokenProvider;
 import com.example.kahoot.services.AuthService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -25,13 +26,13 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final AuthService service;
-    private final TokenService tokenService;
+    private final TokenProvider tokenProvider;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, AuthService service, TokenService tokenService) {
+    public AuthController(AuthenticationManager authenticationManager, AuthService service, TokenProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.service = service;
-        this.tokenService = tokenService;
+        this.tokenProvider = tokenProvider;
     }
 
     private static final Log log = LogFactory.getLog(AuthController.class);
@@ -55,11 +56,13 @@ public class AuthController {
             var authUser = authenticationManager.authenticate(usernamePassword);
             var user = (User) authUser.getPrincipal();
 
+            // Додаємо автентифікованого користувача до SecurityContextHolder
+            SecurityContextHolder.getContext().setAuthentication(authUser);
+
             // Генерація access token з часом закінчення дії
-            String accessToken = tokenService.generateAccessToken(user);
+            String accessToken = tokenProvider.generateAccessToken(user);
             Date expirationTime = Date.from(Instant.now().plusSeconds(3600)); // інформація про життя Токена
 
-            // for testing purposes
             return ResponseEntity.ok(new JwtDto(accessToken, expirationTime));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -74,7 +77,7 @@ public class AuthController {
                 token = token.substring(7);
             }
             // Invalidate the token (for example, by adding it to a blacklist)
-            tokenService.invalidateToken(token);
+            tokenProvider.invalidateToken(token);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -89,7 +92,7 @@ public class AuthController {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
-            var newAccessToken = tokenService.refreshAccessToken(token);
+            var newAccessToken = tokenProvider.refreshAccessToken(token);
             Date expirationTime = Date.from(Instant.now().plusSeconds(3600)); // New token valid for 1 hour
 
             return ResponseEntity.ok(new JwtDto(newAccessToken, expirationTime));
@@ -99,9 +102,14 @@ public class AuthController {
         }
     }
 
+    // method doesn't work
     // for testing purposes
-    @GetMapping("/current")
-    public ResponseEntity<User> getCurrentUser() {
-        return ResponseEntity.ok(service.getCurrentUser());
-    }
+//    @GetMapping("/current")
+//    public ResponseEntity<User> getCurrentUser() {
+//        try {
+//            return ResponseEntity.ok(service.getCurrentUser());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//        }
+//    }
 }

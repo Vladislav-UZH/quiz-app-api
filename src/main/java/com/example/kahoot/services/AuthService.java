@@ -5,6 +5,7 @@ import com.example.kahoot.controllers.dtos.SignUpDto;
 import com.example.kahoot.models.User;
 import com.example.kahoot.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,11 +41,12 @@ public class AuthService {
 //        return user;
 //    }
 
-    public User getCurrentUser() {
-        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            return (User) authentication.getPrincipal();
-        }
-        throw new UsernameNotFoundException("No user currently authenticated");
-    }
+    // method doesn't work
+//    public User getCurrentUser() {
+//        var authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+//            return (User) authentication.getPrincipal();
+//        }
+//        throw new UsernameNotFoundException("No user currently authenticated");
+//    }
 }

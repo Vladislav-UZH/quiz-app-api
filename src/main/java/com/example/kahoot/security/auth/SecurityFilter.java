@@ -1,8 +1,7 @@
 package com.example.kahoot.security.auth;
 
-import com.example.kahoot.models.User;
 import com.example.kahoot.repositories.UserRepository;
-import com.example.kahoot.security.token.TokenService;
+import com.example.kahoot.security.token.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +21,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    private TokenService tokenService;
+    private TokenProvider tokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -30,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
         if (token != null) {
             try {
-            var username = tokenService.validateToken(token);
+            var username = tokenProvider.validateToken(token);
             var userOptional = userRepository.findByUsername(username);
             if (userOptional.isPresent()) {
                 var user = userOptional.get();
