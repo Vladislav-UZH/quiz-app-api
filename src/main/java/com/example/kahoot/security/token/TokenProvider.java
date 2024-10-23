@@ -45,7 +45,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(claims.getSubject())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3000000)) // життя токена
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour validity
                 .signWith(key)
                 .compact();
     }

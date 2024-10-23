@@ -52,18 +52,8 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<JwtDto> signIn(@RequestBody SignInDto data) {
         try {
-            var usernamePassword = new UsernamePasswordAuthenticationToken(data.username(), data.password());
-            var authUser = authenticationManager.authenticate(usernamePassword);
-            var user = (User) authUser.getPrincipal();
-
-            // Додаємо автентифікованого користувача до SecurityContextHolder
-            SecurityContextHolder.getContext().setAuthentication(authUser);
-
-            // Генерація access token з часом закінчення дії
-            String accessToken = tokenProvider.generateAccessToken(user);
-            Date expirationTime = Date.from(Instant.now().plusSeconds(3600)); // інформація про життя Токена
-
-            return ResponseEntity.ok(new JwtDto(accessToken, expirationTime));
+            JwtDto jwt = service.signIn(data);
+            return ResponseEntity.ok(jwt);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -93,7 +83,7 @@ public class AuthController {
                 token = token.substring(7);
             }
             var newAccessToken = tokenProvider.refreshAccessToken(token);
-            Date expirationTime = Date.from(Instant.now().plusSeconds(3600)); // New token valid for 1 hour
+            Date expirationTime = Date.from(Instant.now().plusMillis(3600000)); // New token valid for 1 hour
 
             return ResponseEntity.ok(new JwtDto(newAccessToken, expirationTime));
         } catch (Exception e) {
