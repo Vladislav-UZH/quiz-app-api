@@ -3,6 +3,7 @@ package com.example.kahoot.controllers;
 import com.example.kahoot.controllers.dtos.JwtDto;
 import com.example.kahoot.controllers.dtos.SignInDto;
 import com.example.kahoot.controllers.dtos.SignUpDto;
+import com.example.kahoot.controllers.dtos.UserDto;
 import com.example.kahoot.models.User;
 import com.example.kahoot.security.token.TokenService;
 import com.example.kahoot.services.AuthService;
@@ -38,11 +39,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpDto data) {
         try {
-            service.signUp(data);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            User createdUser = service.signUp(data);
+            UserDto userDto = new UserDto(createdUser.getUsername(), createdUser.getEmail(), createdUser.getRole());
+            return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -57,6 +59,7 @@ public class AuthController {
             String accessToken = tokenService.generateAccessToken(user);
             Date expirationTime = Date.from(Instant.now().plusSeconds(3600)); // інформація про життя Токена
 
+            // for testing purposes
             return ResponseEntity.ok(new JwtDto(accessToken, expirationTime));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

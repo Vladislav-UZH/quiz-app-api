@@ -51,15 +51,29 @@ public class TokenService {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
+//    don't need this method
+//    public boolean validateToken(String token) {
+//        try {
+//            if (isTokenBlacklisted(token)) {
+//                return false;
+//            }
+//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+//            return true;
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+
+    public String validateToken(String token) {
         try {
-            if (isTokenBlacklisted(token)) {
-                return false;
-            }
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getSubject();
         } catch (Exception e) {
-            return false;
+            throw new RuntimeException("Error while validating token", e);
         }
     }
 

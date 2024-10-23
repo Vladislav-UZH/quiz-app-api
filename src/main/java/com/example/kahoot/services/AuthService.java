@@ -19,7 +19,7 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void signUp(SignUpDto data) {
+    public User signUp(SignUpDto data) {
         if (userRepository.findByUsername(data.username()).isPresent()) {
             throw new RuntimeException("Username is already taken");
         }
@@ -28,7 +28,7 @@ public class AuthService {
         user.setEmail(data.email());
         user.setPassword(passwordEncoder.encode(data.password()));
         user.setRole(data.role());
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
 //    public User signIn(SignInDto data) {
