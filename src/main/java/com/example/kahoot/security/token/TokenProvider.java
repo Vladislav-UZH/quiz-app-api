@@ -14,6 +14,7 @@ import java.util.Date;
 
 @Service
 public class TokenProvider {
+
     @Value("${security.jwt.token.secret-key}")
     private String JWT_SECRET;
 
@@ -46,4 +47,32 @@ public class TokenProvider {
             throw new RuntimeException("Error while validating token", e);
         }
     }
+
+  // maybe not needed
+    public String validateRefreshToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(JWT_SECRET);
+            return JWT.require(algorithm)
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException exception) {
+            throw new JWTVerificationException("Error while validating refresh token", exception);
+        }
+    }
+
+    public String refreshToken(String refreshToken) {
+        String username = validateRefreshToken(refreshToken);
+        User user = userService.findByUsername(username);
+        return generateAccessToken(user);
+    }
+
+    private Instant genAccessExpirationDate() {
+        return LocalDateTime.now().plusSeconds(10).toInstant(ZoneOffset.of("+02:00"));
+    }
+
+    private Instant genRefreshExpirationDate() {
+        return LocalDateTime.now().plusDays(7).toInstant(ZoneOffset.of("+02:00"));
+    }
+  //////////
 }

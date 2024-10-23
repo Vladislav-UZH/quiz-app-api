@@ -1,5 +1,6 @@
 package com.example.kahoot.security.config;
 
+import com.example.kahoot.enums.UserRole;
 import com.example.kahoot.security.auth.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

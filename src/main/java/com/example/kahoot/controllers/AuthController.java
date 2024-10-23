@@ -95,7 +95,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtDto("Invalid username or password.", null));
         }
     }
-
+  
     // for testing purposes
     @GetMapping("/current")
     public ResponseEntity<User> getCurrentUser() {
