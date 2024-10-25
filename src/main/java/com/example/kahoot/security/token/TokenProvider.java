@@ -31,7 +31,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 30000)) // 30 seconds validity
+                .setExpiration(new Date(System.currentTimeMillis() + (30000 * 4))) // 120 seconds validity
                 .signWith(key)
                 .compact();
     }

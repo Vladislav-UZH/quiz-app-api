@@ -1,6 +1,7 @@
 package com.example.kahoot.security.config;
 
 import com.example.kahoot.security.auth.SecurityFilter;
+import com.example.kahoot.security.token.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,8 @@ public class AuthConfig {
     SecurityFilter securityFilter;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, TokenProvider tokenProvider) throws Exception {
+
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
