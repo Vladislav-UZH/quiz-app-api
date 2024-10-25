@@ -26,8 +26,8 @@ public class User implements UserDetails {
 
     @Id
 //    before the change was AUTO
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "uuid")
     private UUID id;
 
     @Column(name = "username", nullable = false)

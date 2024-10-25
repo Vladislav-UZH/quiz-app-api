@@ -59,17 +59,17 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Spring Boot Starter Data JDBC -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jdbc</artifactId>
-		</dependency>
+<!--		&lt;!&ndash; Spring Boot Starter Data JDBC &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-data-jdbc</artifactId>-->
+<!--		</dependency>-->
 
-		<!-- Spring Boot Starter JDBC -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
+<!--		&lt;!&ndash; Spring Boot Starter JDBC &ndash;&gt;-->
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-jdbc</artifactId>-->
+<!--		</dependency>-->
 
 		<!-- Spring Boot Starter Data JPA -->
 		<dependency>
