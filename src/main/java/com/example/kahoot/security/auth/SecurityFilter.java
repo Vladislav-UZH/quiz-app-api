@@ -23,11 +23,13 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     private TokenProvider tokenProvider;
 
+//  just need to add token validation here
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         var token = this.recoverToken(request);
-        if (token != null) {
+//        if token exists, and it is valid, then set the authentication
+        if (token != null && tokenProvider.validateToken(token) != null) {
             try {
             var username = tokenProvider.validateToken(token);
             var userOptional = userRepository.findByUsername(username);

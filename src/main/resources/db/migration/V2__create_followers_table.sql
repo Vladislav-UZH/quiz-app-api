@@ -1,4 +1,4 @@
--- V3__create_followers_table.sql
+-- V2__create_followers_table.sql
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE followers (
