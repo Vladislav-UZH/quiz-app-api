@@ -110,6 +110,7 @@
 			<version>4.4.0</version>
 		</dependency>
 
+		<!-- before was 9.16.0 -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
@@ -167,8 +168,6 @@
 			<version>2.0.1.Final</version>
 		</dependency>
 	</dependencies>
-
-
 
 	<build>
 		<plugins>
