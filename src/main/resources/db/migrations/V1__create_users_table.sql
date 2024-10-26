@@ -12,5 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     score INTEGER DEFAULT 0,
     day_streak INTEGER DEFAULT 0,
     count_test INTEGER DEFAULT 0
+
+--     НИЗАШО В СВІТІ НЕ ДОДАВАТИ НОВІ ПОЛЯ, НЕ РОБЛЯЧИ ЦЕ В НОВІЙ МІГРАЦІЇ
 --     last_logout_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
