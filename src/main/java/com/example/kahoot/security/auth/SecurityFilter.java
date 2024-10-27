@@ -24,27 +24,31 @@ public class SecurityFilter extends OncePerRequestFilter {
     private TokenProvider tokenProvider;
 
 //  just need to add token validation here
+    // SecurityFilter.java
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         var token = this.recoverToken(request);
-//        if token exists, and it is valid, then set the authentication
-        if (token != null && tokenProvider.validateToken(token) != null) {
+
+        if (token != null) {
             try {
-            var username = tokenProvider.validateToken(token);
-            var userOptional = userRepository.findByUsername(username);
-            if (userOptional.isPresent()) {
-                var user = userOptional.get();
-                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+                var username = tokenProvider.validateAccessToken(token);
+                if (username != null) {
+                    var userOptional = userRepository.findByUsername(username);
+                    if (userOptional.isPresent()) {
+                        var user = userOptional.get();
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
             } catch (Exception e) {
-              // Log the error if necessary
-              SecurityContextHolder.clearContext();
+                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);
     }
+
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");

@@ -1,4 +1,10 @@
 package com.example.kahoot.controllers.dtos;
 
-public record JwtDto(String accessToken, java.util.Date expirationTime) {
-}
+import java.util.Date;
+
+public record JwtDto(
+        String accessToken,
+        Date accessTokenExpiration,
+        String refreshToken,
+        Date refreshTokenExpiration
+) {}

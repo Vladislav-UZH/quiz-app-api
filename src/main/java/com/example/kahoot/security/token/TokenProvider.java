@@ -1,6 +1,9 @@
+// TokenProvider.java
 package com.example.kahoot.security.token;
 
+import com.example.kahoot.enums.TokenValidity;
 import com.example.kahoot.models.User;
+import com.example.kahoot.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -10,85 +13,99 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class TokenProvider {
+    private final UserRepository userRepository;
     private Key key;
-    private Set<String> blacklistedTokens;
 
     @Value("${security.jwt.token.secret-key}")
     private String JWT_SECRET;
 
+    public TokenProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(JWT_SECRET.getBytes());
-        this.blacklistedTokens = new HashSet<>();
     }
 
+    // Термін дії токенів у мілісекундах
+    private final long ACCESS_TOKEN_VALIDITY = TokenValidity.ACCESS_TOKEN_VALIDITY.getValidity();
+    private final long REFRESH_TOKEN_VALIDITY = TokenValidity.REFRESH_TOKEN_VALIDITY.getValidity();
+
+    // Генерація Access токена
     public String generateAccessToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
+                .claim("lastLogoutAt", user.getLastLogoutAt() != null ? user.getLastLogoutAt().toEpochMilli() : 0)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (30000 * 4))) // 120 seconds validity
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .signWith(key)
                 .compact();
     }
 
-    public String refreshAccessToken(String token) {
-        if (isTokenBlacklisted(token)) {
-            throw new RuntimeException("Token has been invalidated");
-        }
-
-        Claims claims = getClaimsFromToken(token);
+    // Генерація Refresh токена
+    public String generateRefreshToken(User user) {
         return Jwts.builder()
-                .setSubject(claims.getSubject())
+                .setSubject(user.getUsername())
+                .claim("type", "refresh")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour validity
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_VALIDITY))
                 .signWith(key)
                 .compact();
     }
 
-//    don't need this method
-//    public boolean validateToken(String token) {
-//        try {
-//            if (isTokenBlacklisted(token)) {
-//                return false;
-//            }
-//            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-//            return true;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
-
-    public String validateToken(String token) {
+    public String validateAccessToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return claims.getSubject();
+
+            String username = claims.getSubject();
+
+            // Отримуємо користувача з бази даних
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            // Перевірка lastLogoutAt
+            Long lastLogoutAtInToken = claims.get("lastLogoutAt", Long.class);
+            if (user.getLastLogoutAt() != null && user.getLastLogoutAt().toEpochMilli() > lastLogoutAtInToken) {
+                throw new RuntimeException("Token issued before last logout");
+            }
+
+            return username;
         } catch (Exception e) {
-            throw new RuntimeException("Error while validating token", e);
+            throw new RuntimeException("Error while validating access token", e);
         }
     }
 
-    public void invalidateToken(String token) {
-        blacklistedTokens.add(token);
+    public String validateRefreshToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String tokenType = claims.get("type", String.class);
+            if (!"refresh".equals(tokenType)) {
+                throw new RuntimeException("Invalid token type");
+            }
+
+            String username = claims.getSubject();
+
+            // Отримуємо користувача з бази даних
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            return username;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while validating refresh token", e);
+        }
     }
 
-    private boolean isTokenBlacklisted(String token) {
-        return blacklistedTokens.contains(token);
-    }
-
-    private Claims getClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
 }

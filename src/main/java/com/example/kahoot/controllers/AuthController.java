@@ -27,12 +27,14 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final AuthService service;
     private final TokenProvider tokenProvider;
+    private final AuthService authService;
 
     @Autowired
-    public AuthController(AuthenticationManager authenticationManager, AuthService service, TokenProvider tokenProvider) {
+    public AuthController(AuthenticationManager authenticationManager, AuthService service, TokenProvider tokenProvider, AuthService authService) {
         this.authenticationManager = authenticationManager;
         this.service = service;
         this.tokenProvider = tokenProvider;
+        this.authService = authService;
     }
 
     private static final Log log = LogFactory.getLog(AuthController.class);
@@ -59,15 +61,16 @@ public class AuthController {
         }
     }
 
+
+
     @PostMapping("/signout")
-    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> signOut(@RequestHeader("Authorization") String accessToken) {
         try {
-            // Remove the Bearer prefix if present
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
+            if (accessToken.startsWith("Bearer ")) {
+                accessToken = accessToken.substring(7);
             }
-            // Invalidate the token (for example, by adding it to a blacklist)
-            tokenProvider.invalidateToken(token);
+            String username = tokenProvider.validateAccessToken(accessToken);
+            service.signOut(username);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -75,22 +78,23 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<JwtDto> refresh(@RequestHeader("Authorization") String token) {
-        try {
-            // Remove the Bearer prefix if present
-            if (token.startsWith("Bearer ")) {
-                token = token.substring(7);
-            }
-            var newAccessToken = tokenProvider.refreshAccessToken(token);
-            Date expirationTime = Date.from(Instant.now().plusMillis(3600000)); // New token valid for 1 hour
 
-            return ResponseEntity.ok(new JwtDto(newAccessToken, expirationTime));
+
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtDto> refresh(@RequestHeader("Authorization") String refreshToken) {
+        try {
+            if (refreshToken.startsWith("Bearer ")) {
+                refreshToken = refreshToken.substring(7);
+            }
+            JwtDto jwt = service.refreshAccessToken(refreshToken);
+            return ResponseEntity.ok(jwt);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtDto("Invalid username or password.", null));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new JwtDto("Invalid refresh token.", null, null, null));
         }
     }
+
+
 
     // method doesn't work
     // for testing purposes

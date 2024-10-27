@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -63,6 +64,9 @@ public class User implements UserDetails {
     @Column(name = "user_history")
     private List<UUID> userHistory;  // User game history (last 10 games)
 
+    @Column(name = "last_login_at")
+    private Instant lastLogoutAt; // Last logout time
+
     // Relationships with Follower
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follower> followers;
@@ -104,6 +108,14 @@ public class User implements UserDetails {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    public Instant getLastLogoutAt() {
+        return lastLogoutAt;
+    }
+
+    public void setLastLogoutAt(Instant lastLogoutAt) {
+        this.lastLogoutAt = lastLogoutAt;
     }
 
     // Other UserDetails methods
